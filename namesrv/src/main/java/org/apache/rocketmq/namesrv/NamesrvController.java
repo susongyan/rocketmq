@@ -49,6 +49,10 @@ public class NamesrvController {
     private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryImpl(
         "NSScheduledThread"));
     private final KVConfigManager kvConfigManager;
+
+    /**
+     * 路由信息管理器
+     */
     private final RouteInfoManager routeInfoManager;
 
     private RemotingServer remotingServer;
@@ -74,14 +78,14 @@ public class NamesrvController {
     }
 
     public boolean initialize() {
-
+        // 从磁盘文件中加载kv配置
         this.kvConfigManager.load();
-
+        // 初始化netty服务端
         this.remotingServer = new NettyRemotingServer(this.nettyServerConfig, this.brokerHousekeepingService);
-
+        // 初始化请求和响应的处理线程池
         this.remotingExecutor =
             Executors.newFixedThreadPool(nettyServerConfig.getServerWorkerThreads(), new ThreadFactoryImpl("RemotingExecutorThread_"));
-
+        // 注册请求处理器
         this.registerProcessor();
 
         this.scheduledExecutorService.scheduleAtFixedRate(NamesrvController.this.routeInfoManager::scanNotActiveBroker, 5, 10, TimeUnit.SECONDS);
