@@ -894,6 +894,8 @@ public class BrokerController {
             @Override
             public void run() {
                 try {
+                    // 每间隔30秒 将broker自己的信息和 订阅的topic 注册到每一个nameserver节点上
+                    // nameserver返回topic最新配置信息， broker才更新本地topic元数据
                     BrokerController.this.registerBrokerAll(true, false, brokerConfig.isForceRegister());
                 } catch (Throwable e) {
                     log.error("registerBrokerAll Exception", e);

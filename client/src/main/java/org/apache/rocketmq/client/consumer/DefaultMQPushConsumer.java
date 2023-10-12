@@ -65,7 +65,7 @@ public class DefaultMQPushConsumer extends ClientConfig implements MQPushConsume
 
     private final InternalLogger log = ClientLogger.getLog();
 
-    /**
+    /*d*
      * Internal implementation. Most of the functions herein are delegated to it.
      */
     protected final transient DefaultMQPushConsumerImpl defaultMQPushConsumerImpl;

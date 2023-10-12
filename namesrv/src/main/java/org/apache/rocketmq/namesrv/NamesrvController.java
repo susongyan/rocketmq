@@ -85,11 +85,13 @@ public class NamesrvController {
         // 初始化请求和响应的处理线程池
         this.remotingExecutor =
             Executors.newFixedThreadPool(nettyServerConfig.getServerWorkerThreads(), new ThreadFactoryImpl("RemotingExecutorThread_"));
-        // 注册请求处理器
+        // 注册请求处理器 DefaultRequestProcessor
         this.registerProcessor();
 
+        // 定时检测掉线的broker， 如果超过2分钟没收到心跳 则踢掉
         this.scheduledExecutorService.scheduleAtFixedRate(NamesrvController.this.routeInfoManager::scanNotActiveBroker, 5, 10, TimeUnit.SECONDS);
 
+        // 每10分钟 打印 kvconfig 下内容
         this.scheduledExecutorService.scheduleAtFixedRate(NamesrvController.this.kvConfigManager::printAllPeriodically, 1, 10, TimeUnit.MINUTES);
 
         if (TlsSystemConfig.tlsMode != TlsMode.DISABLED) {
